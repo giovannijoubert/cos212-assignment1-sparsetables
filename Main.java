@@ -40,12 +40,18 @@ public class Main
 		mySchedule.addEvent("20:30", "SUN", "Tennis");
 		
 		mySchedule.addEvent("06:00", "tue", "hockey");
-		mySchedule.addEvent("21:00", "SUN", "Ball",120); //120 not working
+		mySchedule.addEvent("21:00", "SUN", "Ball",300); 
+		mySchedule.addEvent("21:00", "SUN", "Lol",300);
+		mySchedule.addEvent("21:00", "SUN", "Lol",300);
+		mySchedule.addEvent("21:00", "SUN", "Lol",300);
+		 mySchedule.addEvent("21:30", "tue", "aadsa",990);
+		 mySchedule.addEvent("21:30", "tue", "bbb",990);
+		 mySchedule.addEvent("06:00", "thu", "hockey");
 
-	//	mySchedule.deleteEvent("Hockey");
-	System.out.println("\t Time Printout: ");
+	mySchedule.clearByTime("22:00");
+		
 
-		String queryDay = "mon";
+		String queryDay = "wed";
 		System.out.println();
 		System.out.println("\t Day Printout: "+queryDay);
 		Event Transverse = mySchedule.rootDay[mySchedule.dayConv(queryDay)];
@@ -55,7 +61,9 @@ public class Main
 		}
 		System.out.println(Transverse.getDescription() + "\t" + Transverse.getDay() + "\t" + Transverse.getTime());
 
-		String queryTime = "06:30";
+		
+
+		String queryTime = "06:00";
 		System.out.println();
 		System.out.println("\t Time Printout: "+queryTime);
 		Event timeTransverse = mySchedule.rootTime[mySchedule.timeConv(queryTime)];
@@ -66,7 +74,7 @@ public class Main
 
 		System.out.println();
 
-		printSchedule(mySchedule);
+     	printSchedule(mySchedule);
 	}
 
 	
