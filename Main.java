@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class Main
 {
 	/*Use this class to test your implementation.  This file will be overwritten for marking purposes.*/
@@ -30,6 +32,8 @@ public class Main
 		
 		//Write code to test your implementation here.
 		Schedule mySchedule = new Schedule();
+
+		/* MANUALLY ADDING EVENTS
 		mySchedule.addEvent("06:00", "MON", "Hockey");
 		
 		mySchedule.addEvent("06:30", "TUE", "Tennis");
@@ -48,10 +52,26 @@ public class Main
 		 mySchedule.addEvent("21:30", "tue", "bbb",990);
 		 mySchedule.addEvent("06:00", "thu", "hockey");
 
-	mySchedule.clearByTime("22:00");
+		mySchedule.clearByTime("22:00");
+		*/
+
+		int number = new Random().nextInt(5 - 1 + 1) + 1;
+		int day = new Random().nextInt(6 - 0 + 1) + 0;
+		int time = new Random().nextInt(32 - 0 + 1) + 0;
+		number = number*30;
+		Integer counter = 0;
+			for(int j = 0; j < 15; j++){
+				number = new Random().nextInt(5 - 1 + 1) + 1;
+				number = number*30;
+				day = new Random().nextInt(6 - 0 + 1) + 0;
+				time = new Random().nextInt(32 - 0 + 1) + 0;
+				mySchedule.addEvent(mySchedule.rootTimeIndex[time], mySchedule.rootDayIndex[day], counter.toString(),number);
+				counter++;
+			}
+		
 		
 
-		String queryDay = "wed";
+		String queryDay = "mon";
 		System.out.println();
 		System.out.println("\t Day Printout: "+queryDay);
 		Event Transverse = mySchedule.rootDay[mySchedule.dayConv(queryDay)];
