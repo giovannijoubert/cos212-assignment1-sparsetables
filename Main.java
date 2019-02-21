@@ -43,19 +43,28 @@ public class Main
 		mySchedule.addEvent("06:30", "SUN", "Rugby");
 		mySchedule.addEvent("20:30", "SUN", "Tennis");
 		
-		mySchedule.addEvent("06:00", "tue", "hockey");
+		mySchedule.addEvent("06:00", "tue", "heyo");
 		mySchedule.addEvent("21:00", "SUN", "Ball",300); 
 		mySchedule.addEvent("21:00", "SUN", "Lol",300);
-		mySchedule.addEvent("21:00", "SUN", "Lol",300);
-		mySchedule.addEvent("21:00", "SUN", "Lol",300);
-		 mySchedule.addEvent("21:30", "tue", "aadsa",990);
-		 mySchedule.addEvent("21:30", "tue", "bbb",990);
-		 mySchedule.addEvent("06:30", "sun", "Rugby",60); // NOT CORRECT RESULT NEEDS TO GO IN AT 129
+		mySchedule.addEvent("21:00", "SUN", "aaa",360);
+		mySchedule.addEvent("21:30", "tue", "bbb",990);
 
-		mySchedule.clearByTime("22:00");
+		mySchedule.addEvent("22:00", "SUN", "Ball"); 
+
+		mySchedule.addEvent("08:30", "tue", "asd",120);
+
 		
-		mySchedule.deleteEvent("06:30", "fri");
 		
+	
+		mySchedule.addEvent("21:00", "SUN", "Lol",300); 
+		 mySchedule.addEvent("21:30", "tue", "aadsa",990); //NOT CORRECT RESULT (No Tail)
+	
+	 mySchedule.addEvent("06:00", "sun", "asd",60); // NOT CORRECT RESULT NEEDS TO GO IN AT 129
+
+		mySchedule.deleteEvent("bbb");
+		mySchedule.deleteEvent("10:30", "tue");
+		
+		System.out.println(mySchedule.findEvent("sport").getDay());
 
 	/* generating randomly
 		int number = new Random().nextInt(5 - 1 + 1) + 1;
@@ -74,7 +83,7 @@ public class Main
 		
 		
 
-		String queryDay = "sun";
+		String queryDay = "mon";
 		System.out.println();
 		System.out.println("\t Day Printout: "+queryDay);
 		Event Transverse = mySchedule.rootDay[mySchedule.dayConv(queryDay)];
@@ -86,7 +95,7 @@ public class Main
 
 		
 
-		String queryTime = "06:00";
+		String queryTime = "06:30";
 		System.out.println();
 		System.out.println("\t Time Printout: "+queryTime);
 		Event timeTransverse = mySchedule.rootTime[mySchedule.timeConv(queryTime)];

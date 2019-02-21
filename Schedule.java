@@ -103,6 +103,19 @@ public class Schedule
 		
 		Event dayTransverse = getDayEvent(day);
 		Boolean placed = false;
+
+		if(dayTransverse != null){
+			if(timeConv(dayTransverse.getTime()) > timeConv(time)){ //new node needs to go infront check front size
+				if(timeConv(dayTransverse.getTime()) < eventLength){
+					time = rootTimeIndex[timeConv(dayTransverse.getTime())+1];
+				}
+			}
+
+		if(dayTransverse.getTime() == time){ //head node time == placetime
+			time = rootTimeIndex[timeConv(time)+1];
+		} 
+		}
+
 		if(dayTransverse == null){
 			rootDay[dayConv(day)] = insertMe[0];
 			insertMe[eventLength-1].down = insertMe[0];
@@ -113,7 +126,7 @@ public class Schedule
 				insertMe[i].nodeTime = rootTimeIndex[(timeConv(placedTime)+i)];
 			}
 		} else { 
-			if(timeConv(getDayEvent(day).getTime())>timeConv(time)){	//if its the smallest element
+			if((timeConv((getDayEvent(day).getTime()))>timeConv(time)) && (timeConv(getDayEvent(day).getTime()) >= eventLength)){	//if its the smallest element
 				insertMe[eventLength-1].down = rootDay[dayConv(day)];
 				insertMe[0].up = rootDay[dayConv(day)].up;
 				rootDay[dayConv(day)].up.down = insertMe[0];
@@ -127,18 +140,36 @@ public class Schedule
 			} else {
 			while(dayTransverse.down != getDayEvent(day)){ //not yet at tail
 				if((timeConv(dayTransverse.getTime()) < timeConv(time)) && (timeConv(dayTransverse.down.getTime()) > timeConv(time))){ 
-					if(timeConv(dayTransverse.down.getTime())-timeConv(dayTransverse.getTime()) > eventLength){ //large enough gap
+					if(timeConv(dayTransverse.down.getTime())-timeConv(time) > eventLength){ //large enough gap
 						dayTransverse.down.up = insertMe[eventLength-1];
 						insertMe[eventLength-1].down = dayTransverse.down;
 						dayTransverse.down = insertMe[0];
 						insertMe[0].up = dayTransverse;
-						placedTime = rootTimeIndex[timeConv(dayTransverse.getTime())+1];
+
+						/*placedTime = rootTimeIndex[timeConv(dayTransverse.getTime())+1];*/
+						placedTime = time;
+						for (int i = 0; i < eventLength; i++) { //set new times in node
+							insertMe[i].nodeTime = rootTimeIndex[(timeConv(placedTime)+i)];
+						}
+
 						placedDay = dayTransverse.getDay();
 						placed = true;
 					}
 				}
 				dayTransverse = dayTransverse.down;
 			}
+		
+			Event testClashFirst;
+					for (int i = 0; i < eventLength; i++) { //check for clashing events
+						if(timeConv(time)+i < 32){
+						testClashFirst = getEvent(rootTimeIndex[timeConv(time)+i],day);
+						if (testClashFirst != null){
+							addEvent(rootTimeIndex[timeConv(testClashFirst.getTime())+1], day, description, duration);
+							return;
+						}
+					}
+					} 
+
 			if(!placed){ // place at tail
 				if(getDayEvent(day).up.getTime() == time){ //tail == time of new node
 					if((33-(timeConv(getDayEvent(day).up.getTime())+1) >= eventLength)){ // day has enough space
@@ -184,13 +215,24 @@ public class Schedule
 					placedTime = time;
 					}
 					placedDay = day;
+
+					Event testClash;
+					for (int i = 0; i < eventLength; i++) { //check for clashing events
+						testClash = getEvent(rootTimeIndex[timeConv(placedTime)+i],placedDay);
+						if (testClash != null){
+							addEvent(rootTimeIndex[timeConv(testClash.getTime())+1], placedDay, description, duration);
+							return;
+						}
+					} 
+
+				
 					head.up = insertMe[eventLength-1];
 					tail.down = insertMe[0];
 					insertMe[0].up = tail;
 					insertMe[eventLength-1].down = head;
 					for (int i = 0; i < eventLength; i++) { //set new times in node
 						insertMe[i].nodeTime = rootTimeIndex[(timeConv(placedTime)+i)];
-					}
+					} 
 	
 				} else {// current day does not have enough space
 					
@@ -259,44 +301,60 @@ public class Schedule
 		deleted event. Note: all adjacent (up and down) events with the same description must also be deleted.
 		
 		If no such event exists, return null.*/
-		if(getEvent(time, day) != null){
-			Event timeTransverse = getTimeEvent(time);
-			if(timeTransverse.getDay().equalsIgnoreCase(day)){ //test first element
-				timeTransverse.up.down = timeTransverse.down;
-				timeTransverse.down.up = timeTransverse.up;
-				rootTime[timeConv(time)] = timeTransverse.right;
-				
-			} else {
-			while(timeTransverse.right != null){
-				if(timeTransverse.right.getDay().equalsIgnoreCase(day)){
-				/*	if(timeConv(time) != 0){ //attempt at deleting items with same description above
-					if(getEvent(rootTimeIndex[timeConv(time)-1],day) != null){
-					if(getEvent(rootTimeIndex[timeConv(time)-1],day).getDescription().equalsIgnoreCase(timeTransverse.right.getDescription())){
-						deleteEvent(rootTimeIndex[timeConv(time)-1],day);
-					}
-					}
-					}
-					if(timeConv(time) != 33){
-					if(getEvent(rootTimeIndex[timeConv(time)+1],day) != null){
-					if(getEvent(rootTimeIndex[timeConv(time)+1],day).getDescription().equalsIgnoreCase(timeTransverse.right.getDescription())){
-						deleteEvent(rootTimeIndex[timeConv(time)+1],day);
-					}
-					}
-					}*/
-					timeTransverse.right.up.down = timeTransverse.right.down;
-					timeTransverse.right.down.up = timeTransverse.right.up;
-					timeTransverse.right = timeTransverse.right.right;
-					break;
-				}
-				timeTransverse = timeTransverse.right;
-			}
-		}
-		} else {
-			return null;
-		}
+		Event deleteMe = getEvent(time, day);
+		if(deleteMe != null){ 
+			
+			Event deleteHead = deleteMe;
+			Event deleteTail = deleteMe;
 
-				
+			//Continue going up aslong as description is the same and the time is earlier than selected
+			while(deleteHead.up.getDescription().equalsIgnoreCase(deleteMe.getDescription())
+			&& timeConv(deleteHead.up.getTime()) < timeConv(deleteMe.getTime())){
+				deleteHead = deleteHead.up;
+			}
+
+			//Continue going down aslong as description is the same and the time is later than selected
+			while(deleteTail.down.getDescription().equalsIgnoreCase(deleteMe.getDescription())
+			&& timeConv(deleteTail.down.getTime()) > timeConv(deleteMe.getTime())){
+				deleteTail = deleteTail.down;
+			}
+
+			if(deleteHead.down == deleteHead){ //deleteHead is only element
+				rootDay[dayConv(day)] = null;
+			} else if(deleteHead == getDayEvent(day)){ //deleteHead is top element
+				if(deleteTail.down == deleteHead){ //event is entire day
+					rootDay[dayConv(day)] = null;
+				} else {
+					rootDay[dayConv(day)] = deleteTail.down;
+					rootDay[dayConv(day)].up = deleteHead.up;
+				}
+				} else {
+					deleteHead.up.down = deleteTail.down;
+					deleteTail.down.up = deleteHead.up;
+				}
+
+			//Now delete for time pointers
+			for (int i = timeConv(deleteHead.getTime()); i < timeConv(deleteTail.getTime())+1; i++) {
+				Event transverseTime = rootTime[i];
+
+				if(rootTime[i].getDay().equalsIgnoreCase(deleteHead.getDay())){
+					rootTime[i] = transverseTime.right;
+				}
+
+				if(transverseTime != null){
+				while(transverseTime.right != null){
+					if(transverseTime.right.getDay().equalsIgnoreCase(deleteHead.getDay())){
+						transverseTime.right = transverseTime.right.right;
+					}
+					transverseTime = transverseTime.right;
+					if(transverseTime == null){break;}
+				}
+				}
+			}
+			return deleteMe.getDescription();
+		} //if no return in statement return null
 		return null;
+		
 	}
 	
 	public void deleteEvent(String description)
@@ -319,7 +377,19 @@ public class Schedule
 		}
 		}
 		
-		
+		for (int i = 0; i < 7; i++) { //disconnect rootDay
+			transverse = rootDay[i];
+			if(transverse != null){
+			while((transverse.down != rootDay[i]) && transverse.getDescription().equalsIgnoreCase(description)){
+				rootDay[i] = transverse.down;
+				transverse = transverse.down;
+			}
+		}
+			if(rootDay[i] != null && rootDay[i].getDescription().equalsIgnoreCase(description)){
+				rootDay[i] = null;
+			}
+
+		}
 
 		for (int i = 0; i < 33; i++) {
 			transverse = rootTime[i];
@@ -370,21 +440,26 @@ public class Schedule
 
 			for (int i = 0; i < 33; i++) {
 				timeTransverse = rootTime[i];
+				if(timeTransverse != null){
 				while(timeTransverse.right != null){
 					if(timeTransverse.right.getDay().equalsIgnoreCase(day)){
 						timeTransverse = timeTransverse.right.right;
 					}
 					timeTransverse = timeTransverse.right;
+					
 				}
+			}
 			}
 
 			for (int i = 0; i < 33; i++) {
 				transverse = rootTime[i];
+				if(transverse != null){
 				if(transverse.getDay().equalsIgnoreCase(day)){
 					rootTime[i].down.up = rootTime[i].up;
 					rootTime[i].up.down = rootTime[i].down;
 					rootTime[i] = transverse.right;
 				}
+			}
 			}
 	}
 
@@ -443,16 +518,20 @@ public class Schedule
 		Event transverse;
 		for (int i = 0; i < 7; i++) {
 			transverse = rootDay[i];
+			if(transverse != null){
 			while(transverse.down != rootDay[i]){
-				if(transverse.getDescription() == description){
+				if(transverse.getDescription().equalsIgnoreCase(description)){
 					return transverse;
 				}
 				transverse = transverse.down;
 			}
-			if(transverse.getDescription() == description){
+		}
+		if(transverse != null){
+			if(transverse.getDescription().equalsIgnoreCase(description)){
 				return transverse;
 			}
 		}
+	}
 		return null;
 	}
 	
