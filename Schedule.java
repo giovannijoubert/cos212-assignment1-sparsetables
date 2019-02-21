@@ -85,6 +85,10 @@ public class Schedule
 		Assume only increments of 30 will be used, eg. 30, 60, 90, 120, etc.
 		
 		Duplicate events (events with the same description) are allowed.*/
+		if(timeConv(time) == null){
+			time = "06:00";
+		}
+
 		String placedTime = "";
 		String placedDay = "";
 		int eventLength = (duration / 30);
@@ -265,6 +269,20 @@ public class Schedule
 			} else {
 			while(timeTransverse.right != null){
 				if(timeTransverse.right.getDay().equalsIgnoreCase(day)){
+				/*	if(timeConv(time) != 0){ //attempt at deleting items with same description above
+					if(getEvent(rootTimeIndex[timeConv(time)-1],day) != null){
+					if(getEvent(rootTimeIndex[timeConv(time)-1],day).getDescription().equalsIgnoreCase(timeTransverse.right.getDescription())){
+						deleteEvent(rootTimeIndex[timeConv(time)-1],day);
+					}
+					}
+					}
+					if(timeConv(time) != 33){
+					if(getEvent(rootTimeIndex[timeConv(time)+1],day) != null){
+					if(getEvent(rootTimeIndex[timeConv(time)+1],day).getDescription().equalsIgnoreCase(timeTransverse.right.getDescription())){
+						deleteEvent(rootTimeIndex[timeConv(time)+1],day);
+					}
+					}
+					}*/
 					timeTransverse.right.up.down = timeTransverse.right.down;
 					timeTransverse.right.down.up = timeTransverse.right.up;
 					timeTransverse.right = timeTransverse.right.right;
