@@ -9,9 +9,9 @@ public class Main
 		for (int i = 0; i < 7; i++) {
 			Line = Line+","+mySchedule.rootDayIndex[i];
 			if (mySchedule.rootDay[i] == null){
-				Line = Line + " ↓(null)";  
+				Line = Line + " (null)";  
 			} else {
-				Line = Line + " ↓(" + mySchedule.rootDay[i].getDescription() +")";
+				Line = Line + " (" + mySchedule.rootDay[i].getDescription() +")";
 			}
 		}
 		System.out.println(Line);
@@ -19,9 +19,9 @@ public class Main
 		for (int i = 0; i < 33; i++) {
 			Line = mySchedule.rootTimeIndex[i];
 			if (mySchedule.rootTime[i] == null){
-				Line = Line + " →(null)";  
+				Line = Line + " (null)";  
 			} else {
-				Line = Line + " →(" + mySchedule.rootTime[i].getDescription() +")";
+				Line = Line + " (" + mySchedule.rootTime[i].getDescription() +")";
 			}
 			Line = Line + ",";
 			for (int j = 0; j < 7; j++) {
@@ -34,19 +34,19 @@ public class Main
 					U = printMe.up;
 					Line = Line + printMe.getDescription(); 
 					if (D == null){
-						Line = Line + " ↓(null)";  
+						Line = Line + " (null)";  
 					} else {
-						Line = Line + " ↓(" + D.getDescription() +")";
+						Line = Line + " (" + D.getDescription() +")";
 					}
 					if (U == null){
-						Line = Line + "↑(null)";  
+						Line = Line + "(null)";  
 					} else {
-						Line = Line + "↑(" + U.getDescription() +")";
+						Line = Line + "(" + U.getDescription() +")";
 					}
 					if (R == null){
-						Line = Line + "→(null)";  
+						Line = Line + "(null)";  
 					} else {
-						Line = Line + "→(" + R.getDescription() +")";
+						Line = Line + "(" + R.getDescription() +")";
 					}
 					Line = Line + ",";
 				}

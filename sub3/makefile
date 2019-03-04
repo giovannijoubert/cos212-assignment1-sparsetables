@@ -1,6 +1,6 @@
 run:
 	javac *.java
-	java Main > out.csv
+	java Main
 
 clean:
 	rm *.class
